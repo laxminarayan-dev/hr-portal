@@ -9,7 +9,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     { name: "Dashboard", path: "/" },
     { name: "Employees", path: "/employees" },
     { name: "Departments", path: "/departments" },
-    { name: "Leaves", path: "/leaves" },
+    { name: "Salary", path: "/salary" },
     { name: "Users", path: "/users" },
   ];
   useEffect(() => {
