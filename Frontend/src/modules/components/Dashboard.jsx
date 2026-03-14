@@ -1,98 +1,34 @@
-import { Users, Building, Banknote } from "lucide-react";
-import { MyLineChart, MyPieChart, MyBarChart } from "../../lib/MyChart";
-import EmployeeActivityTable from "../../lib/tables/EmployeeActivityTable";
-const Dashboard = () => {
-  const employees = [
-    {
-      id: "userq2345",
-      name: "Alice Johnson",
-      role: "Software Engineer",
-      department: "Engineering",
-      status: "Active",
-    },
-    {
-      id: "user3452",
-      name: "Michael Smith",
-      role: "HR Manager",
-      department: "Human Resources",
-      status: "Active",
-    },
-    {
-      id: "user2353r",
-      name: "Sophie Lee",
-      role: "Product Designer",
-      department: "Design",
-      status: "On Leave",
-    },
-    {
-      id: "user234rwe",
-      name: "Daniel Kim",
-      role: "Sales Executive",
-      department: "Sales",
-      status: "Active",
-    },
-    {
-      id: "userqw4rase",
-      name: "Rachel Adams",
-      role: "Marketing Lead",
-      department: "Marketing",
-      status: "Resigned",
-    },
-    {
-      id: "userasdvc",
-      name: "James Patel",
-      role: "DevOps Engineer",
-      department: "Engineering",
-      status: "Active",
-    },
-    {
-      id: "userq2345",
-      name: "Laura Chen",
-      role: "Recruiter",
-      department: "Human Resources",
-      status: "Active",
-    },
-    {
-      id: "userq2345",
-      name: "Chris Evans",
-      role: "QA Analyst",
-      department: "Quality Assurance",
-      status: "On Leave",
-    },
-    {
-      id: "userq2345",
-      name: "Priya Singh",
-      role: "Business Analyst",
-      department: "Product",
-      status: "Active",
-    },
-  ];
+import { MyLineChart, MyPieChart, MyBarChart } from "../lib/MyChart";
+import EmployeeActivityTable from "../lib/tables/EmployeeActivityTable";
+import { useEffect, useState } from "react";
+import { fetchInitialData, icon } from "../store/apis/dashboard";
 
-  const icon = {
-    users: <Users size={16} />,
-    building: <Building size={16} />,
-    banknote: <Banknote size={16} />,
-  };
-  const dashboardData = [
-    {
+const Dashboard = () => {
+  const [dashboardDataValues, setDashboardDataValues] = useState({});
+  const [dashboardData, setDashboardData] = useState({
+    employees: {
       icon: "users",
       heading: "Total Employees",
-      value: "20",
+      value: null,
       prefix: "",
     },
-    {
+    departments: {
       icon: "building",
       heading: "Total Department",
-      value: "2",
+      value: null,
       prefix: "",
     },
-    {
+    salary: {
       icon: "banknote",
       heading: "Salary Processed This Month",
-      value: "2000000",
+      value: null,
       prefix: "₹",
     },
-  ];
+  });
+  useEffect(() => {
+    fetchInitialData(setDashboardDataValues);
+  }, []);
+
   return (
     <section className="max-w-7xl m-auto flex flex-col gap-5 px-10 py-8">
       <div>
@@ -103,7 +39,7 @@ const Dashboard = () => {
       </div>
       {/* overview section */}
       <div className=" grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-y-5 gap-x-5">
-        {dashboardData.map((item, index) => {
+        {Object.keys(dashboardData).map((item, index) => {
           return (
             <div
               key={index}
@@ -111,15 +47,17 @@ const Dashboard = () => {
             >
               <div className="flex flex-col justify-center items-start flex-1">
                 <span className="font-semibold text-xs line-clamp-1 ">
-                  {item.heading}
+                  {dashboardData[item]["heading"]}
                 </span>
                 <span className="font-bold text-xl">
-                  {item.prefix}
-                  {item.value}
+                  {dashboardData[item]["prefix"]}
+                  {item == "salary"
+                    ? dashboardDataValues["totalSalaryPaidThisMonth"]
+                    : dashboardDataValues[item]}
                 </span>
               </div>
               <div className="w-10 flex justify-end items-start text-gray-400">
-                {icon[item.icon]}
+                {icon[dashboardData[item]["icon"]]}
               </div>
             </div>
           );
@@ -146,10 +84,6 @@ const Dashboard = () => {
           </p>
           <MyPieChart />
         </div>
-      </div>
-      {/* tabular section  */}
-      <div>
-        <EmployeeActivityTable tableData={employees} />
       </div>
     </section>
   );

@@ -20,7 +20,7 @@ function SalaryDuesTable({ emps, calculatePendingSalary }) {
           emps.map((emp, ind) => (
             <tr
               key={ind}
-              className="border-t hover:bg-gray-50 transition-colors"
+              className="border-t border-slate-200 hover:bg-gray-50 transition-colors"
             >
               <td className="py-3 px-4 font-medium truncate">{emp.fullName}</td>
               <td className="py-3 px-4 truncate">

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
-import DepartmentDetailTable from "../../../lib/tables/DepartmentDetailTable ";
+import DepartmentDetailTable from "../../lib/tables/DepartmentDetailTable ";
+import { Plus } from "lucide-react";
 const Departments = () => {
   const [deptList, setDeptList] = useState(null);
   const [response, setResponse] = useState(null);
@@ -28,8 +29,9 @@ const Departments = () => {
         <button
           type="button"
           onClick={() => setAddDeptModal(true)}
-          className=" text-sm border p-1 px-3 rounded-full cursor-pointer hover:bg-gray-900 hover:text-gray-100"
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition"
         >
+          <Plus />
           Add Department
         </button>
       </div>
@@ -43,7 +45,11 @@ const Departments = () => {
           <h1>No Department found!</h1>
         </div>
       ) : (
-        deptList.length > 0 && <DepartmentDetailTable tableData={deptList} />
+        deptList.length > 0 && (
+          <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm max-w-7xl mx-auto">
+            <DepartmentDetailTable tableData={deptList} />
+          </div>
+        )
       )}
       {response && (
         <div className="fixed z-100 top-20 right-8 transform -translate-x-1 bg-gray-800 p-4 rounded shadow-lg">

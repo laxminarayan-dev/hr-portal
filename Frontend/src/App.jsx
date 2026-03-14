@@ -2,18 +2,18 @@ import { Routes, Route } from "react-router-dom";
 import { Fragment, useEffect, useState } from "react";
 
 import Root from "./Root";
-import AdminLogin from "./appModules/modules/admin/auth/AdminLogin";
-import ErrorPage from "./appModules/sharedComponents/ErrorPage";
-import Loading from "./appModules/sharedComponents/Loading";
-import Dashboard from "./appModules/modules/admin/Dashboard";
-import Employees from "./appModules/modules/admin/employees/Employees";
-import EmployeeDetail from "./appModules/modules/admin/employees/EmployeeDetail";
-import Department from "./appModules/modules/admin/department/Department";
-import DepartmentDetail from "./appModules/modules/admin/department/DepartmentDetail";
-import Leaves from "./appModules/modules/admin/Leaves";
-import Salary from "./appModules/modules/admin/salary/Salary";
-import Users from "./appModules/modules/admin/User/Users";
-import SalaryPrint from "./appModules/modules/admin/salary/SalaryPrint";
+import AdminLogin from "./modules/components/auth/AdminLogin";
+import ErrorPage from "./modules/sharedComponents/ErrorPage";
+import Loading from "./modules/sharedComponents/Loading";
+import Dashboard from "./modules/components/Dashboard";
+import Employees from "./modules/components/employees/Employees";
+import EmployeeDetail from "./modules/components/employees/EmployeeDetail";
+import Department from "./modules/components/department/Department";
+import DepartmentDetail from "./modules/components/department/DepartmentDetail";
+import Leaves from "./modules/components/leaves/Leaves";
+import Salary from "./modules/components/salary/Salary";
+import Admin from "./modules/components/admin/Admin";
+import SalaryPrint from "./modules/components/salary/SalaryPrint";
 
 const App = () => {
   const [isloggedIn, setIsLoggedIn] = useState(null);
@@ -40,7 +40,7 @@ const App = () => {
             <Route path="leaves" element={<Leaves />} />
             <Route path="salary" element={<Salary />} />
             <Route path="salaryPrint" element={<SalaryPrint />} />
-            <Route path="users" element={<Users />} />
+            <Route path="admin" element={<Admin />} />
           </Route>
           <Route path="*" element={<ErrorPage />} />
         </Routes>

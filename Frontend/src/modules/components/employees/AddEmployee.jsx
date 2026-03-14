@@ -1,114 +1,16 @@
 import { useRef, useEffect, useState } from "react";
-import EmployeeDetailTable from "../../../lib/tables/EmployeeDetailTable";
+import {
+  initialDataForAddEmp,
+  designations,
+  fetchDepartments,
+  handleChange,
+  addEmployee,
+} from "../../store/apis/employe";
 
-const Employees = () => {
-  const [emplist, setEmplist] = useState(null);
-  const [addEmpModel, setAddEmpModel] = useState(false);
-  const [response, setResponse] = useState(null);
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emp/allEmployees`, {
-      method: "GET",
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        if (data.emps) {
-          setEmplist(data.emps);
-        } else {
-          setEmplist([]);
-        }
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  return (
-    <div className="p-8">
-      {/* Employee management content goes here */}
-
-      <div className="flex items-center justify-between mb-10 ">
-        <h1 className="text-2xl font-bold">Employee Management</h1>
-        <button
-          type="button"
-          onClick={() => setAddEmpModel(true)}
-          className="border p-1 px-3 rounded-full cursor-pointer hover:bg-gray-900 hover:text-gray-100"
-        >
-          Add Employee
-        </button>
-      </div>
-      {emplist == null ? (
-        <div className="w-full h-90 flex justify-center items-center">
-          <div className="animate-spin border border-b-white border-l-0 w-10 h-10 rounded-full"></div>
-        </div>
-      ) : emplist.length == 0 ? (
-        <div>
-          <h1>No Employee found!</h1>
-        </div>
-      ) : (
-        emplist.length > 0 && <EmployeeDetailTable tableData={emplist} />
-      )}
-      {response && (
-        <div className="fixed z-100 top-20 right-8 transform -translate-x-1 bg-gray-800 p-4 rounded shadow-lg">
-          <p className={response.success ? "text-green-500" : "text-red-500"}>
-            {response.msg || "Default Message"}
-          </p>
-        </div>
-      )}
-      {
-        <AddEmployeeModal
-          open={addEmpModel}
-          onClose={setAddEmpModel}
-          onAdd={setEmplist}
-          setResponse={setResponse}
-        />
-      }
-    </div>
-  );
-};
-
-export default Employees;
-
-export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
-  const initialData = {
-    id: "",
-    fullName: "",
-    email: "",
-    phone: "",
-    dob: "",
-    department: null,
-    designation: "",
-    salaryBasic: "",
-    salaryBonus: "",
-    bankName: "",
-    bankIFSC: "",
-    bankAccount: "",
-    leavesTotal: 24,
-    leavesTaken: 0,
-    status: "Active",
-    addressLine1: "",
-    addressLine2: "",
-    addressCity: "",
-    addressState: "",
-    addressPostalCode: "",
-    addressCountry: "India",
-    hireDate: "",
-  };
-  const [form, setForm] = useState(initialData);
+const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
+  const [form, setForm] = useState(initialDataForAddEmp);
   const [loading, setLoading] = useState(false);
   const [departments, setDepartments] = useState([]);
-  const designations = [
-    { _id: 1, name: "Manager" },
-    { _id: 2, name: "Senior Manager" },
-    { _id: 3, name: "Assistant Manager" },
-    { _id: 4, name: "Software Engineer" },
-    { _id: 5, name: "Sales Executive" },
-    { _id: 6, name: "HR Specialist" },
-    { _id: 7, name: "Accountant" },
-    { _id: 8, name: "Intern" },
-    { _id: 9, name: "Team Lead" },
-    { _id: 10, name: "Director" },
-  ];
-  // const [response, setResponse] = useState(null);
   const formRef = useRef(null);
   const [defaultDate, setDefaultDate] = useState("");
   const [today, setToday] = useState("");
@@ -136,111 +38,8 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
   }, [onClose]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/department/`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.departments) setDepartments(data.departments);
-        else {
-          setDepartments([]);
-        }
-      })
-      .catch((err) => console.log(err));
+    fetchDepartments(setDepartments);
   }, []);
-
-  function handleChange(e) {
-    setForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    // Compose salary, leaves, address objects
-    const empData = {
-      fullName: form.fullName,
-      email: form.email,
-      phone: form.phone,
-      dob: form.dob || defaultDate,
-      department: form.department,
-      designation: form.designation,
-      hireDate: form.hireDate || today,
-      salary: {
-        basic: Number(form.salaryBasic),
-        bonus: Number(form.salaryBonus),
-        allowance: {
-          houseRentAllowances: 10000,
-          conveyanceAllowances: 4000,
-          medicalAllowances: 5000,
-          specialAllowances: 1000,
-        },
-        currency: "INR",
-        proccessed: 0,
-        due: 0,
-        lastProccessed: 0,
-        lastDue: 0,
-        lastProcessedMonth: new Date().toISOString().replace("Z", "+00:00"),
-        deduction: {
-          epf: 2000,
-          healthInsurance: 1000,
-          professionalInsurance: 1000,
-          tds: (Number(form.salaryBasic) * 0.03).toFixed(2),
-        },
-      },
-      bank: {
-        name: form.bankName,
-        ifsc: form.bankIFSC,
-        account: form.bankAccount,
-      },
-      leaves: {
-        totalLeaves: Number(form.leavesTotal),
-        leavesTaken: Number(form.leavesTaken),
-        leavesRemaining: Number(form.leavesTotal) - Number(form.leavesTaken),
-      },
-      status: form.status,
-      address: {
-        line1: form.addressLine1,
-        line2: form.addressLine2,
-        city: form.addressCity,
-        state: form.addressState,
-        postalCode: form.addressPostalCode,
-        country: form.addressCountry,
-      },
-    };
-
-    // call api
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emp/add`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(empData),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-
-        if (data.emps) {
-          onAdd(data.emps);
-          setForm(initialData);
-          onClose(false);
-          setResponse({ success: true, msg: data.message });
-        } else {
-          setResponse({ success: false, msg: data.message });
-        }
-      })
-      .catch((err) => console.error(err))
-      .finally(() => {
-        setTimeout(() => {
-          setLoading(false);
-          setResponse(null);
-        }, 2000);
-      });
-    // end api
-  }
 
   if (!open) return null;
 
@@ -252,7 +51,20 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
       >
         <h2 className="text-2xl font-bold mb-4">Add Employee</h2>
         <div className="h-[100%] overflow-y-scroll overflow-x-hidden p-4 pb-14 sm:pb-6">
-          <form className="grid gap-4" onSubmit={handleSubmit}>
+          <form
+            className="grid gap-4"
+            onSubmit={() =>
+              addEmployee(
+                e,
+                form,
+                setLoading,
+                onAdd,
+                setForm,
+                onClose,
+                setResponse
+              )
+            }
+          >
             <div className="grid gap-1">
               <label htmlFor="fullName" className="text-sm font-medium">
                 Full Name
@@ -262,7 +74,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                 name="fullName"
                 className="border border-gray-300 rounded-lg py-1 px-3"
                 value={form.fullName}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e, setForm);
+                }}
                 required
               />
             </div>
@@ -277,7 +91,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                 type="email"
                 className="border border-gray-300 rounded-lg py-1 px-3"
                 value={form.email}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e, setForm);
+                }}
                 required
               />
             </div>
@@ -291,7 +107,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                 name="phone"
                 className="border border-gray-300 rounded-lg py-1 px-3"
                 value={form.phone}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e, setForm);
+                }}
               />
             </div>
             {/* DOB */}
@@ -306,7 +124,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                 className="border w-full border-gray-300 rounded-lg py-1 px-3"
                 defaultValue={defaultDate}
                 max={defaultDate}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e, setForm);
+                }}
               />
             </div>
 
@@ -352,7 +172,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                 name="designation"
                 className="border border-gray-300 rounded-lg py-1 px-3"
                 value={form.designation}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e, setForm);
+                }}
                 required
               >
                 <option value="">Select Designation</option>
@@ -376,7 +198,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                 className="border w-full border-gray-300 rounded-lg py-1 px-3"
                 defaultValue={today}
                 min={today}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e, setForm);
+                }}
               />
             </div>
 
@@ -396,7 +220,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                   type="number"
                   className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                   value={form.salaryBasic}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e, setForm);
+                  }}
                   required
                 />
               </div>
@@ -415,7 +241,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                   type="number"
                   className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                   value={form.salaryBonus}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e, setForm);
+                  }}
                 />
               </div>
             </div>
@@ -436,7 +264,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                   type="text"
                   className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                   value={form.bankName}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e, setForm);
+                  }}
                   required
                 />
               </div>
@@ -455,7 +285,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                   type="text"
                   className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                   value={form.bankIFSC}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e, setForm);
+                  }}
                   required
                 />
               </div>
@@ -474,7 +306,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                   type="text"
                   className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                   value={form.bankAccount}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e, setForm);
+                  }}
                   required
                 />
               </div>
@@ -496,7 +330,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                   type="number"
                   className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                   value={form.leavesTotal}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e, setForm);
+                  }}
                 />
               </div>
 
@@ -514,7 +350,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                   type="number"
                   className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                   value={form.leavesTaken}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e, setForm);
+                  }}
                 />
               </div>
 
@@ -531,7 +369,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                   name="status"
                   className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                   value={form.status}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e, setForm);
+                  }}
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
@@ -562,7 +402,9 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                     name={field.id}
                     className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                     value={form[field.id]}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      handleChange(e, setForm);
+                    }}
                     required
                   />
                 </div>
@@ -592,3 +434,5 @@ export const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
     </div>
   );
 };
+
+export default AddEmployeeModal;

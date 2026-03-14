@@ -1,143 +1,14 @@
 import { useState, useEffect, useRef, Fragment } from "react";
-import UserDetailTable from "../../../lib/tables/UserDetailTable";
+import { addAdmin, isNotAdmin } from "../../store/apis/admin";
 
-export default function Users() {
-  const [users, setUsers] = useState();
-  const [response, setResponse] = useState(null);
-  const [addUserModel, setAddUserModel] = useState(false);
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/allUsers`, {
-      method: "GET",
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        if (data.users) {
-          setUsers(data.users);
-        } else {
-          setUsers([]);
-        }
-      })
-      .catch((err) => console.log(err));
-  }, []);
-  const handleDelete = (id) => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/${id}`, {
-      method: "Delete",
-    })
-      .then(async (res) => {
-        const result = await res.json();
-        if (res.ok) {
-          setResponse({ success: true, msg: result.message });
-          setUsers(result.remainingUser);
-        } else {
-          console.log(res);
-          setResponse({ success: false, msg: result.message });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setResponse({ success: false, msg: "Internal Server Error!" });
-      })
-      .finally(() => {
-        setTimeout(() => {
-          setResponse(null);
-        }, 2000);
-      });
-  };
-  return (
-    <div className="p-8">
-      {/* Employee management content goes here */}
-
-      <div className="flex items-center justify-between mb-10">
-        <h1 className="text-2xl font-bold">User Management</h1>
-        <button
-          type="button"
-          onClick={() => setAddUserModel(true)}
-          className="border p-1 px-3 rounded-full cursor-pointer hover:bg-gray-900 hover:text-gray-100"
-        >
-          Add User
-        </button>
-      </div>
-      {users == null ? (
-        <div className="w-full h-90 flex justify-center items-center">
-          <div className="animate-spin border border-b-white border-l-0 w-10 h-10 rounded-full"></div>
-        </div>
-      ) : users.length == 0 ? (
-        <div>
-          <h1>No User found!</h1>
-        </div>
-      ) : (
-        users.length > 0 && (
-          <UserDetailTable handleDelete={handleDelete} users={users} />
-        )
-      )}
-      {response && (
-        <div className="fixed z-100 top-20 right-8 transform -translate-x-1 bg-gray-800 p-4 rounded shadow-lg">
-          <p className={response.success ? "text-green-500" : "text-red-500"}>
-            {response.msg || "Default Message"}
-          </p>
-        </div>
-      )}
-
-      {
-        <AddUserModal
-          open={addUserModel}
-          onClose={setAddUserModel}
-          onAdd={setUsers}
-          setResponse={setResponse}
-        />
-      }
-    </div>
-  );
-}
-
-export const AddUserModal = ({ open, onClose, onAdd, setResponse }) => {
+const AddAdminModel = ({ open, onClose, onAdd, setResponse }) => {
   const formRef = useRef(null);
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState([]);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setAdmin((prev) => ({ ...prev, isAdmin: true }));
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/add`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(admin),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.users) {
-          onAdd(data.users);
-          setAdmin(null);
-          onClose(false);
-          setLoading(false);
-          setResponse({ success: true, msg: data.message });
-        } else {
-          setResponse({ success: false, msg: data.message });
-        }
-      })
-      .catch((err) => console.error(err))
-      .finally(() => {
-        setTimeout(() => {
-          setResponse(null);
-        }, 2000);
-      });
-  };
 
-  // Fetch employees for admin selection
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/emp/allEmployees`)
-      .then((res) => res.json())
-      .then((data) => {
-        const validEmployees = data.emps.filter(
-          (emp) => emp.isAdmin == null || emp.isAdmin == false
-        );
-        if (data.emps) setEmployees(validEmployees);
-      })
-      .catch((err) => console.log(err));
+    isNotAdmin(setEmployees);
   }, [open]);
 
   if (!open) return null;
@@ -152,7 +23,9 @@ export const AddUserModal = ({ open, onClose, onAdd, setResponse }) => {
         <div className="h-[100%] overflow-x-hidden p-4 pb-6">
           <form
             className="flex flex-col gap-4 h-[inherit] pb-4"
-            onSubmit={handleSubmit}
+            onSubmit={(e) =>
+              addAdmin(e, onAdd, setAdmin, onClose, setLoading, setResponse)
+            }
           >
             <div className="max-h-[95%] overflow-y-scroll">
               {admin ? (
@@ -397,3 +270,5 @@ export const AddUserModal = ({ open, onClose, onAdd, setResponse }) => {
     </div>
   );
 };
+
+export default AddAdminModel;

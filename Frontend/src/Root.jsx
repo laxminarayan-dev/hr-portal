@@ -1,7 +1,7 @@
-import Navbar from "./appModules/sharedComponents/Navbar";
-import { Outlet } from "react-router-dom";
-import Sidebar from "./appModules/sharedComponents/Sidebar";
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import Navbar from "./modules/sharedComponents/Navbar";
+import Sidebar from "./modules/sharedComponents/Sidebar";
 const Root = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   return (

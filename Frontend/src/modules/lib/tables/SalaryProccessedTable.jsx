@@ -1,10 +1,7 @@
-import { Edit, Trash2, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-function SalaryProccessedTable({
-  ProccesedSalaryData,
-  calculatePendingSalary,
-}) {
+function SalaryProccessedTable({ ProccesedSalaryData }) {
   const navigate = useNavigate();
   const handlePrint = (emp) => {
     navigate("/salaryPrint", { state: { emp } });
@@ -17,7 +14,7 @@ function SalaryProccessedTable({
           <th className="py-3 px-4 text-left">Employee</th>
           <th className="py-3 px-4 text-left">Department</th>
           <th className="py-3 px-4 text-left truncate">Last Payble</th>
-          <th className="py-3 px-4 text-left truncate">Last Paid</th>
+          <th className="py-3 px-4 text-left truncate"> Paid</th>
           <th className="py-3 px-4 text-left truncate">Last Paid Month</th>
           <th className="py-3 px-4 text-left truncate">Due Balance</th>
           <th className="py-3 px-4 text-center"></th>
@@ -28,7 +25,7 @@ function SalaryProccessedTable({
           ProccesedSalaryData.map((sal, idx) => (
             <tr
               key={idx}
-              className="border-t hover:bg-gray-50 transition-colors"
+              className="border-t border-slate-200 hover:bg-gray-50 transition-colors"
             >
               <td className="py-3 px-4 font-medium truncate">{sal.fullName}</td>
               <td className="py-3 px-4 truncate">
@@ -37,13 +34,6 @@ function SalaryProccessedTable({
               <td className="py-3 px-4 text-blue-400">
                 ₹{sal.salary.netPay.toLocaleString()}
               </td>
-              {/* <td className="py-3 px-4">
-                {sal.salary.bonus ? (
-                  <>₹{sal.salary.bonus.toLocaleString()}</>
-                ) : (
-                  "N/A"
-                )}
-              </td> */}
               <td className="py-3 px-4 font-semibold text-red-400">
                 ₹{sal.salary.proccessed.toLocaleString()}
               </td>

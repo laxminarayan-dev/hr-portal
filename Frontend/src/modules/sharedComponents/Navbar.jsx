@@ -24,10 +24,10 @@ export default function Navbar({ isSidebarOpen, setIsSidebarOpen }) {
       <div>
         <Link to="/" className="flex gap-2 justify-center items-center">
           <NotebookPen />
-          <h1 className="text-lg font-bold font-m">Workology</h1>
+          <h1 className="text-lg font-bold font-m">HrFusion</h1>
         </Link>
       </div>
-      <div>
+      {/* <div>
         <ul className="flex gap-5 justify-center items-center ">
           <li className="cursor-pointer">
             <BellDot size={20} />
@@ -68,7 +68,7 @@ export default function Navbar({ isSidebarOpen, setIsSidebarOpen }) {
             </button>
           </li>
         </ul>
-      </div>
+      </div> */}
     </nav>
   );
 }
