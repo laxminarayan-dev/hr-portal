@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express();
-const PORT = 8000 || process.env.PORT
+const PORT = 3003 || process.env.PORT
 const cors = require("cors")
 const dbConnection = require("./db/dbConnection")
 const route = require("./routes/route")
