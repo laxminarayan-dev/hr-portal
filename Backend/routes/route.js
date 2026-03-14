@@ -6,6 +6,7 @@ const usersRoute = require("./usersRoute")
 const empRoute = require("./empRoute")
 const deptRoute = require("./deptRoute")
 const salaryRoute = require("./salaryRoute")
+const dashboardRoute = require('./dashboardRoute')
 
 route.get("/api", async (req, res) => {
     try {
@@ -22,6 +23,7 @@ route.use("/api/users", usersRoute)
 route.use("/api/emp", empRoute)
 route.use("/api/department", deptRoute)
 route.use("/api/salary", salaryRoute)
+route.use("/api/dashboard", dashboardRoute)
 
 
 route.use((req, res) => {

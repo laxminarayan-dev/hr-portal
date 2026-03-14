@@ -55,7 +55,6 @@ route.post("/add", async (req, res) => {
                 const emp = new EmpModel({ ...req.body, password: rawPassword })
                 await emp.save()
                 const emps = await EmpModel.find()
-                console.log(emps);
 
                 res.status(200).send({
                     emps: emps,
