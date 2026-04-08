@@ -37,7 +37,12 @@ export default function Admin() {
       ) : (
         users.length > 0 && (
           <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm max-w-7xl mx-auto">
-            <UserDetailTable deleteAdmin={deleteAdmin} users={users} />
+            <UserDetailTable
+              deleteAdmin={deleteAdmin}
+              users={users}
+              setResponse={setResponse}
+              setUsers={setUsers}
+            />
           </div>
         )
       )}

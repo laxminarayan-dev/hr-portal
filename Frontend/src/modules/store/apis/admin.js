@@ -16,7 +16,7 @@ export const fetchAdmins = (setUsers) => {
     })
 }
 
-export const deleteAdmin = (id, setResponse, setUsers) => {
+export const deleteAdmin = (id, setResponse = () => { }, setUsers = () => { }) => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/${id}`, {
         method: "Delete",
     })
@@ -43,21 +43,21 @@ export const deleteAdmin = (id, setResponse, setUsers) => {
 
 // for adding admin
 export const addAdmin = (
-    e,
+    admin,
     onAdd,
     setAdmin,
     onClose,
     setLoading,
     setResponse
 ) => {
-    e.preventDefault();
-    setAdmin((prev) => ({ ...prev, isAdmin: true }));
+    const updatedAdmin = { ...admin, isAdmin: true }; // ✅ FIX
+
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/add`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(admin),
+        body: JSON.stringify(updatedAdmin), // ✅ use updated object
     })
         .then((res) => res.json())
         .then((data) => {

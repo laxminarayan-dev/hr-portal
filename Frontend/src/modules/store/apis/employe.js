@@ -175,7 +175,6 @@ export const fetchDepartments = (setDepartments) => {
 }
 
 export const addEmployee = (
-    e,
     form,
     setLoading,
     onAdd,
@@ -183,7 +182,6 @@ export const addEmployee = (
     onClose,
     setResponse
 ) => {
-    e.preventDefault();
     setLoading(true);
 
     // Compose salary, leaves, address objects
@@ -191,10 +189,12 @@ export const addEmployee = (
         fullName: form.fullName,
         email: form.email,
         phone: form.phone,
-        dob: form.dob || defaultDate,
+        dob: form.dob,
+        // dob: form.dob || defaultDate,
         department: form.department,
         designation: form.designation,
-        hireDate: form.hireDate || today,
+        hireDate: form.hireDate,
+        // hireDate: form.hireDate || today,
         salary: {
             basic: Number(form.salaryBasic),
             bonus: Number(form.salaryBonus),
@@ -259,7 +259,10 @@ export const addEmployee = (
                 setResponse({ success: false, msg: data.message });
             }
         })
-        .catch((err) => console.error(err))
+        .catch((err) => {
+            alert(err)
+            console.error(err)
+        })
         .finally(() => {
             setTimeout(() => {
                 setLoading(false);

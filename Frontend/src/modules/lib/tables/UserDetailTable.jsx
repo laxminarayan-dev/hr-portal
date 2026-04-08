@@ -6,7 +6,7 @@ const generateUserId = (mongoId) => {
   return "USR" + hash.substring(0, 6).toUpperCase();
 };
 
-const UserDetailTable = ({ users, handleDelete }) => {
+const UserDetailTable = ({ users, deleteAdmin, setResponse, setUsers }) => {
   return (
     <table className="min-w-full mx-auto border-collapse rounded-md bg-white">
       <thead className="bg-gray-100 text-gray-700 text-sm uppercase font-semibold">
@@ -23,14 +23,20 @@ const UserDetailTable = ({ users, handleDelete }) => {
       {/* Table Body */}
       <tbody>
         {users.map((user, index) => (
-          <UserTableRow key={index} handleDelete={handleDelete} data={user} />
+          <UserTableRow
+            key={index}
+            deleteAdmin={deleteAdmin}
+            setResponse={setResponse}
+            setUsers={setUsers}
+            data={user}
+          />
         ))}
       </tbody>
     </table>
   );
 };
 
-const UserTableRow = ({ data, handleDelete }) => {
+const UserTableRow = ({ data, deleteAdmin, setResponse, setUsers }) => {
   return (
     <tr className="border-t border-slate-200 hover:bg-gray-50 transition-colors">
       <td className="py-3 px-4 truncate">{generateUserId(data._id)}</td>
@@ -43,7 +49,7 @@ const UserTableRow = ({ data, handleDelete }) => {
           size={16}
           className="cursor-pointer text-red-500 hover:text-red-600"
           onClick={() => {
-            handleDelete(data._id);
+            deleteAdmin(data._id, setResponse, setUsers);
           }}
         />
       </td>

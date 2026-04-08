@@ -11,6 +11,10 @@ const AddAdminModel = ({ open, onClose, onAdd, setResponse }) => {
     isNotAdmin(setEmployees);
   }, [open]);
 
+  useEffect(() => {
+    console.log(admin);
+  }, [admin]);
+
   if (!open) return null;
 
   return (
@@ -21,12 +25,7 @@ const AddAdminModel = ({ open, onClose, onAdd, setResponse }) => {
       >
         <h2 className="text-2xl font-bold mb-4">Add Department</h2>
         <div className="h-[100%] overflow-x-hidden p-4 pb-6">
-          <form
-            className="flex flex-col gap-4 h-[inherit] pb-4"
-            onSubmit={(e) =>
-              addAdmin(e, onAdd, setAdmin, onClose, setLoading, setResponse)
-            }
-          >
+          <form className="flex flex-col gap-4 h-[inherit] pb-4">
             <div className="max-h-[95%] overflow-y-scroll">
               {admin ? (
                 <Fragment>
@@ -242,7 +241,17 @@ const AddAdminModel = ({ open, onClose, onAdd, setResponse }) => {
             </div>
             {admin && (
               <button
-                type="submit"
+                type="button"
+                onClick={() => {
+                  addAdmin(
+                    admin,
+                    onAdd,
+                    setAdmin,
+                    onClose,
+                    setLoading,
+                    setResponse,
+                  );
+                }}
                 className="bg-blue-600 text-white p-2 rounded hover:bg-blue-800 transition-colors"
               >
                 Assign as Admin

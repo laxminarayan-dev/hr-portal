@@ -51,20 +51,7 @@ const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
       >
         <h2 className="text-2xl font-bold mb-4">Add Employee</h2>
         <div className="h-[100%] overflow-y-scroll overflow-x-hidden p-4 pb-14 sm:pb-6">
-          <form
-            className="grid gap-4"
-            onSubmit={() =>
-              addEmployee(
-                e,
-                form,
-                setLoading,
-                onAdd,
-                setForm,
-                onClose,
-                setResponse
-              )
-            }
-          >
+          <form className="grid gap-4" action={""}>
             <div className="grid gap-1">
               <label htmlFor="fullName" className="text-sm font-medium">
                 Full Name
@@ -143,7 +130,7 @@ const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
                 onChange={(e) => {
                   const depId = e.target.value;
                   const selectedDep = departments.find(
-                    (dep) => dep?._id === depId
+                    (dep) => dep?._id === depId,
                   );
                   setForm({
                     ...form,
@@ -412,7 +399,17 @@ const AddEmployeeModal = ({ open, onClose, onAdd, setResponse }) => {
             </div>
 
             <button
-              type="submit"
+              type="button"
+              onClick={() => {
+                addEmployee(
+                  form,
+                  setLoading,
+                  onAdd,
+                  setForm,
+                  onClose,
+                  setResponse,
+                );
+              }}
               className="bg-blue-600 text-white p-2 rounded hover:bg-blue-800 transition-colors"
             >
               Add

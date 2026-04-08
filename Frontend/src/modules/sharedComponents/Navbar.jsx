@@ -27,9 +27,9 @@ export default function Navbar({ isSidebarOpen, setIsSidebarOpen }) {
           <h1 className="text-lg font-bold font-m">HrFusion</h1>
         </Link>
       </div>
-      {/* <div>
+      <div>
         <ul className="flex gap-5 justify-center items-center ">
-          <li className="cursor-pointer">
+          {/* <li className="cursor-pointer">
             <BellDot size={20} />
           </li>
           <li
@@ -54,7 +54,7 @@ export default function Navbar({ isSidebarOpen, setIsSidebarOpen }) {
                 Logout
               </h2>
             </div>
-          </li>
+          </li> */}
 
           <li className="block md:hidden cursor-pointer">
             <button
@@ -68,7 +68,7 @@ export default function Navbar({ isSidebarOpen, setIsSidebarOpen }) {
             </button>
           </li>
         </ul>
-      </div> */}
+      </div>
     </nav>
   );
 }

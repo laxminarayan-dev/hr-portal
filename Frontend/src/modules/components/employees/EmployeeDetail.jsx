@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchEmployeeDetail } from "../../store/apis/employe";
+import { fetchEmployeeDetail, handleDelete } from "../../store/apis/employe";
 import UpdateEmployeeModal from "./UpdateEmployee";
 
 export default function EmployeeDetail() {
